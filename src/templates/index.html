@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Postgis_RDF</title>
+        <link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/black/pace-theme-flash.min.css">
+        <style>
+            #rdf {
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: 35px;
+                bottom: 0;
+                padding: 10px;
+            }
+            .tables {
+                margin-top: 10px;
+            }
+            table {
+                border-collapse: collapse;
+            }
+            th, td {
+                border: 1px solid #dddddd;
+                text-align: left;
+                padding: 4px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="options" style="padding-top: 5px;">
+            <span>Seleccionar Tabla:</span>
+            <select id="maps">
+                <option value="ecuador_cantonal" selected>Organización Territorial del Estado Cantonal</option>
+                <option value="ecuador_parroquial">Organización Territorial del Estado Parroquial</option>
+                <option value="ecuador_provincial">Organización Territorial del Estado Provincial</option>
+            </select>
+        </div>
+        <div class="tables">
+            {% for table_ref in tables_refs %}
+            <table id="{{ table_ref.name }}">
+                <tbody>
+                {% for ref in table_ref['values'] %}
+                    <tr>
+                        <th>{{ ref.name }}</th>
+                        <td><a href="{{ ref.uri }}" target="_blank">{{ ref.uri }}</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endfor %}
+        </div>
+        <script>
+            var currentTableName = "ecuador_cantonal";
+            function changeMap(e) {
+                console.log(e.srcElement.value);
+                currentTableName = e.srcElement.value;
+                setCurrentTable();
+            }
+
+            function setCurrentTable() {
+                var tables = document.querySelectorAll('table');
+                for (var i = 0; i < tables.length; i++) {
+                    if (tables[i].id === currentTableName) {
+                        tables[i].style.display = "block";
+                    }
+                    else {
+                        tables[i].style.display = "none";
+                    }
+                }
+            }
+
+            document.getElementById('maps').addEventListener('change', changeMap);
+            document.addEventListener("DOMContentLoaded", function() {
+              setCurrentTable();
+            });
+        </script>
+    </body>
+</html>

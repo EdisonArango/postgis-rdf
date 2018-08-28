@@ -1,0 +1,36 @@
+version: '3.1'
+
+services:
+  web:
+    build: .
+    container_name: pgrdf_web
+    depends_on:
+      - db
+    volumes:
+      - ./src:/src
+    command: python app.py
+    ports:
+      - "5000:5000"
+
+  db:
+    image: mdillon/postgis:latest
+    container_name: pgrdf_postgis
+    environment:
+      POSTGRES_DB: geo24
+      POSTGRES_USER: geo
+      POSTGRES_PASSWORD: geo
+    volumes:
+      - postgisdata:/var/lib/postgresql/data
+      - ./shapefiles:/shapefiles
+    ports:
+      - "5432:5432"
+
+  pg_admin:
+    image: chorss/docker-pgadmin4
+    container_name: pgrdf_pgadmin
+    ports:
+      - "5050:5050"
+
+volumes:
+  postgisdata:
+  cachepbf:

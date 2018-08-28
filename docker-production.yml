@@ -1,0 +1,45 @@
+version: '3.1'
+
+services:
+  web:
+    image: edisonarango/postgis_rdf:latest
+    environment:
+      SERVER: "True"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    depends_on:
+      - db
+    command: python app.py
+    ports:
+      - "80:80"
+    networks:
+      - webnet
+
+  db:
+    image: mdillon/postgis:latest
+    environment:
+      POSTGRES_DB: geo24
+      POSTGRES_USER: geo
+      POSTGRES_PASSWORD: geo
+    volumes:
+      - postgisdata:/var/lib/postgresql/data
+      - ./shapefiles:/shapefiles
+    ports:
+      - "5432"
+    networks:
+      - webnet
+
+  pg_admin:
+    image: chorss/docker-pgadmin4
+    ports:
+      - "5050:5050"
+    networks:
+      - webnet
+
+networks:
+  webnet:
+
+volumes:
+  postgisdata:
